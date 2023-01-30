@@ -1,0 +1,89 @@
+<h1><%= @state %></h1>
+
+<p>Go <a href="/covid">back</a>.</p>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable(<%= raw(@data_array.to_json) %>);
+
+    var options = {
+      title: 'Percent of new tests comprised of new positive cases',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+    chart.draw(data, options);
+  }
+</script>
+
+<div id="curve_chart" style="width: 900px; height: 500px"></div>
+
+<p>To draw a chart like this, include the following code in your template:</p>
+
+<pre>
+<code>
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://www.gstatic.com/charts/loader.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+  google.charts.load(&#39;current&#39;, {&#39;packages&#39;:[&#39;corechart&#39;]});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable(&lt;%= raw(@data_array.to_json) %&gt;);
+
+    var options = {
+      title: &#39;Percent of new tests comprised of new positive cases&#39;,
+      legend: { position: &#39;bottom&#39; }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById(&#39;curve_chart&#39;));
+
+    chart.draw(data, options);
+  }
+&lt;/script&gt;
+
+&lt;div id=&quot;curve_chart&quot; style=&quot;width: 900px; height: 500px&quot;&gt;&lt;/div&gt;
+
+</code>
+</pre>
+
+<p>
+  In your controller action, you must define the instance variable <code>@data_array</code> and populate it with an array of arrays that has the data for the line chart. It should look something like this, once you've populated it:
+</p>
+
+<pre class="debug_dump">[
+    <kbd style="color:white">[0] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:brown">&quot;Date&quot;</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:brown">&quot;Percent of new tests comprised of new positive cases&quot;</kbd>
+    ],
+    <kbd style="color:white">[1] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:darkgreen">Fri, 06 Mar 2020</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:red">nil</kbd>
+    ],
+    <kbd style="color:white">[2] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:darkgreen">Sat, 07 Mar 2020</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:blue">0.0</kbd>
+    ],
+    <kbd style="color:white">[3] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:darkgreen">Sun, 08 Mar 2020</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:blue">0.0</kbd>
+    ],
+    <kbd style="color:white">[4] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:darkgreen">Mon, 09 Mar 2020</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:blue">0.0</kbd>
+    ],
+    <kbd style="color:white">[5] </kbd>[
+        <kbd style="color:white">[0] </kbd><kbd style="color:darkgreen">Tue, 10 Mar 2020</kbd>,
+        <kbd style="color:white">[1] </kbd><kbd style="color:red">nil</kbd>
+    ]
+]</pre>
+
+<p>
+  ..., etc. Then, the Google Charts library will do the rest. You can see more available charts in <a href="https://developers.google.com/chart/interactive/docs/gallery" target="_blank">the Charts Gallery</a>.
+</p>
+
+<p>Data from <a href="https://covidtracking.com/" target="_blank">The COVID Tracking Project</a>.</p>
